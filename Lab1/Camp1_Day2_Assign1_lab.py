@@ -8,7 +8,7 @@ def SetLab():
     return TempSesion
 
 def Readfile():
-    file = open("Lab1/Attended.json", "r") 
+    file = open("Attended.json", "r") 
     data = json.load(file)
     StrInputSession = data["sessions"]
     TempInputSession = StrInputSession.split(",")
