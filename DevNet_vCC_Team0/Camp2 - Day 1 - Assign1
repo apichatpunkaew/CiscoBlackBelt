@@ -1,0 +1,162 @@
+# developed by Gabi Zapodeanu, TSA, GPO, Cisco Systems
+
+# !/usr/bin/env python3
+
+
+import requests
+import json
+import os
+import os.path
+
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+from requests.auth import HTTPBasicAuth  # for Basic Auth
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # Disable insecure https warnings
+
+CMX_URL = 'https://cmxlocationsandbox.cisco.com'  # CMX Sandbox
+CMX_USER = 'learning'
+CMX_PASSW = 'learnin'
+
+CMX_AUTH = HTTPBasicAuth(CMX_USER, CMX_PASSW)
+
+
+def pprint(json_data):
+    """
+    Pretty print JSON formatted data
+    :param json_data:
+    :return:
+    """
+
+    print(json.dumps(json_data, indent=4, separators=(' , ', ' : ')))
+
+
+def all_client_number():
+    """
+    This function will find out how many wireless clients are visible in the environment
+    REST API call to CMX - /api/location/v2/clients/count
+    :param
+    :return: The total number of clients, associated and not associated with the APs
+    """
+
+    url = CMX_URL + 'api/location/v2/clients/count'
+    header = {'content-type': 'application/json', 'accept': 'application/json'}
+    response = requests.get(url, headers=header, auth=CMX_AUTH, verify=False)
+    response_json = response.json()
+    clients_number = response_json['count']
+    return clients_number
+
+
+def get_cmx_map(campus, building, floor, file):
+    """
+    The function will get the floor map for the floor with the name {floor},
+    located in the specified building and campus.
+    REST API call to CMX - 'api/config/v1/maps/image/' + campus/building/floor
+    :param campus: campus name
+    :param building: building name
+    :param floor: floor name
+    :param file: file name to save the image to
+    :return: save the floor map image
+    """
+
+    url = CMX_URL + '/api/config/v1/maps/image/' + campus + '/' + building + '/' + floor
+
+    header = {'content-type': 'application/json'}
+    response = requests.post(url, headers=header, auth=CMX_AUTH, verify=False)
+    print('\nThe floor map request url is: ', url)
+    print('Request status code is: ', response.status_code)
+
+    if response.status_code == 200:  # validate if the request was successful
+        print('Step 2 completed')
+    else:
+        print('Step 2 not completed, please try again')
+
+    # open a file to save the image to
+
+    image_file = open(file, 'wb')
+    image_file.write(response.content)  # save the content of the request as it comes back as an image and not JSON
+    image_file.close()
+
+
+def get_cmx_ap_info(campus, building, floor, ap_name):
+    """
+    The function will get the x/y coordinates of the AP with the name {ap_name} located on
+    the floor with the name {floor}, located in the specified building and campus
+    :param campus: campus name
+    :param building: building name
+    :param floor: floor name
+    :param ap_name: AP name
+    :return: x/y coordinates, from the top left corner of the image
+    """
+
+    url = CMX_URL + '/api/config/v1/maps/info/' + campus + '/' + building + '/' + floor
+    header = {'content-type': 'application/json', 'accept': 'application/json'}
+    response = requests.get(url, headers=header, auth=CMX_AUTH, verify=False)
+    aps_list = response.json()['accessPoints']
+    for ap in aps_list:
+        if ap['name'] == ap_name:
+            ap_x = ap['mapCoordinates']['x']
+            ap_y = ap['mapCoordinates']['y']
+    return ap_x, ap_y
+
+
+# insert your functions for Assignment 4 here
+
+
+def main():
+    """
+    This is your assignment for the CMX module. Please complete steps in sequence.
+
+    1. The function all_client_number() will return the number of all active clients.
+    Please check the function and correct the errors (tip - two errors).
+
+
+    2. The function get_cmx_map(campus, building, floor, file) will save with the name {file} the CMX floor map for
+    campus = 'DevNetCampus'
+    building = 'DevNetBuilding'
+    floor = 'DevNetZone'
+    The function has one error. Please correct it to run correctly.
+
+    Tip: The correct answer will print the Request Status Code: 200 and it will save the file image with this name
+    {DevNetZoneFloorMap.png} in the same folder where you have the script.
+
+
+    3. The final assignment for this module includes one error. Please correct to run correctly.
+
+    Upload the output to the Module Spark Room and the file with the image from the previous step.
+
+
+  
+
+    """
+
+    # 1.
+
+    clients_number = all_client_number()
+    print('\nNumber of all active clients: ', clients_number)
+    print('Step 1 completed')
+
+    # 2.
+
+    campus = 'DevNetCampus'
+    building = 'DevNetBuilding'
+    floor = 'DevNetZone'
+    file = 'DevNetZoneFloorMap.png'
+
+    get_cmx_map(campus, building, floor, file)
+
+    # 3.
+
+    ap_name = 'T1-3'
+
+    ap_x_coordinate = get_cmx_ap_info(campus, building, floor, ap_name)[0]
+    ap_y_coordinate = get_cmx_ap_info(campus, building, floor, ap_name)[2]
+
+    print('\nThe AP with the name ', ap_name, ' coordinates are x/y: ', ap_x_coordinate, ap_y_coordinate)
+    print('Step 3 completed')
+
+
+
+if __name__ == '__main__':
+        main()
+

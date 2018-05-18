@@ -1,0 +1,11 @@
+ 4.
+    Write code that will print the MAC addresses for the clients associated with the AP with the name {T1-3}
+
+    Tip: Re-use code provided to you part of the Assignment 1, write another API call,
+    and use the pprint() function to print nicely.
+
+    Bonus: can you print the number of associated clients to the AP {T1-3}
+    
+    # ...... insert your code here
+    #print('Assignment 2 completed')
+    #print('\nCongratulations! You completed all assignments. Please upload to the CMX Module Spark Room to get credit')

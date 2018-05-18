@@ -1,0 +1,17 @@
+Camp1 - Day 4 - Assign1
+
+Assignment 1
+Please use the file as given in https://github.com/Devanampriya/DevNet_vCC_Team0/blob/master/Camp1%20-%20Day%204%20-%20Assign1-%20Files.zip.
+
+Task 1 – Complete and Run the python file to get to see your APIC-EM topo diagram in the ubuntu workstation. Paste the url you get after successful execution of this python file - into the "Topic - APIC-EM" spark room.
+
+Task 2 – please get the values for the keys below for each of the devices in the apic-em network and paste it in same spark room as above.
+1.	“deviceType”
+2.	“softwareVersion”
+3.	“platformId”
+
+Please note that there should be only a single python file for both the tasks combined.
+
+Hint: the flask part is already completed for you - you just need to do the APIC-EM part(take help of swagger to find the right api) and use your spark api skills. 
+
+As a further reference you can take a look here to understand in detail about how the UI element works : https://abdvl.github.io/
